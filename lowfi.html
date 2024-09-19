@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nav Layout Test with Dynamic Sub Nav and Content</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* Header styles */
+        header {
+            height: 72px;
+            background-color: white;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .header-main {
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .logo {
+            background-color: rgba(150, 255, 3, 1);
+            min-width: 100px;
+            height: 72px;
+        }
+
+        /* Main container */
+        .main-container {
+            display: flex;
+            height: calc(100% - 72px); /* Full height minus header and margins */
+            width: 100%;
+            
+        }
+
+        /* Nav rail */
+        .nav-rail {
+            width: 100px;
+            background-color: rgba(0, 64, 69, 1);
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Nav item styling */
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 16px; /* Space between items */
+            cursor: pointer; /* Add cursor to indicate clickability */
+        }
+
+        .nav-item .icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255,255,255,0.3);
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .nav-item .label {
+            font-size: 12px;
+            text-align: center;
+            color: white;
+        }
+
+        /* Sub Nav styles */
+        .sub-nav {
+            width: 200px;
+            height: 100%; /* Full height */
+            background-color: rgba(242, 242, 242, 1);
+            margin-right: 8px;
+            padding: 8px;
+            display: none; /* Hidden by default */
+        }
+
+        .sub-nav ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .sub-nav ul li {
+            margin-bottom: 12px;
+            cursor: pointer; /* Indicate clickability */
+        }
+
+        /* Main content area */
+        .main-section {
+            flex-grow: 1;
+            padding: 8px;
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+        }
+
+        /* Content container inside main section */
+        .content-container {
+            width: 100%;
+            max-width: 1100px; /* Max width on XL screens */
+            display: flex;
+            flex-direction: row;
+            gap: 16px; /* Space between columns */
+        }
+
+        /* Left column - stretches */
+        .left-column {
+            flex-grow: 1;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        /* Right column - betslip */
+        .betslip {
+            width: 350px;
+            background-color: #f5f5f5;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 6px;
+        }
+
+        /* Labels for demo */
+        .label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        /* Layout changes for medium screens */
+        @media (max-width: 1024px) {
+            .content-container {
+                max-width: 904px; /* Max width on M or L screens */
+            }
+
+            /* Hide the betslip on M screens */
+            .betslip {
+                display: none;
+            }
+        }
+
+        /* Layout changes for smaller screens */
+        @media (max-width: 1439px) {
+            .sub-nav {
+                position: absolute;
+                left: 100px; /* Next to nav rail */
+                z-index: 1;
+                width: 200px;
+                height: 100%; /* Full height */
+                display: none; /* Hidden by default on M and L */
+            }
+
+            .main-container {
+                position: relative;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+
+        </div>
+        <div class="header-main">
+            <div class="label">Header</div>
+        </div>
+    </header>
+
+    <!-- Main section container -->
+    <div class="main-container">
+        <!-- Nav Rail (fixed width) -->
+        <div class="nav-rail" id="navRail">
+            <!-- Nav items will be populated here -->
+        </div>
+
+        <!-- Sub Nav (will be shown dynamically) -->
+        <div class="sub-nav" id="subNav">
+            <ul id="subNavList">
+                <!-- Sub Nav items will be populated here -->
+            </ul>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-section">
+            <div class="content-container">
+                <!-- Left Column -->
+                <div class="left-column" id="mainContent">
+                    <div class="label" id="mainLabel">Left Column</div>
+                </div>
+
+                <!-- Right Column (Betslip) -->
+                <div class="betslip">
+                    <div class="label">Betslip</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Config object for the navigation structure
+        const navConfig = [
+            {
+                label: "Home",
+                icon: "", // Placeholder for icon path or class
+                subNav: [] // No sub-nav items
+            },
+            {
+                label: "Racing",
+                icon: "", // Placeholder for icon path or class
+                subNav: [
+                    "Racing Overview",
+                    "Today's Races",
+                    "Upcoming Events",
+                    "Results"
+                ]
+            },
+            {
+                label: "Sports",
+                icon: "", // Placeholder for icon path or class
+                subNav: [
+                    "Football",
+                    "Basketball",
+                    "Tennis",
+                    "Cricket"
+                ]
+            },
+            {
+                label: "Play Central",
+                icon: "", // Placeholder for icon path or class
+                subNav: [] // No sub-nav items
+            }
+        ];
+    
+        // Elements
+        const navRail = document.getElementById('navRail');
+        const subNav = document.getElementById('subNav');
+        const subNavList = document.getElementById('subNavList');
+        const mainLabel = document.getElementById('mainLabel');
+    
+        // Track current section and sub-section
+        let currentSection = 'Home'; // Assume initial section is 'Racing' for demo
+        let currentSubSection = null;
+        let selectedNavSection = null; // New variable to track selected nav item
+    
+        // Function to build the Nav Rail
+        function buildNavRail() {
+            navRail.innerHTML = ''; // Clear existing content
+    
+            navConfig.forEach((item, index) => {
+                const navItem = document.createElement('div');
+                navItem.classList.add('nav-item');
+                navItem.dataset.index = index;
+    
+                const icon = document.createElement('div');
+                icon.classList.add('icon');
+                // Set icon source or background here if available
+    
+                const label = document.createElement('div');
+                label.classList.add('label');
+                label.textContent = item.label;
+    
+                navItem.appendChild(icon);
+                navItem.appendChild(label);
+    
+                // Add event listener for click to show sub-nav or navigate
+                navItem.addEventListener('click', () => {
+                    handleNavClick(index);
+                });
+    
+                navRail.appendChild(navItem);
+            });
+        }
+    
+        // Function to handle nav click
+        function handleNavClick(index) {
+            const navItem = navConfig[index];
+            const subNavItems = navItem.subNav;
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+    
+            selectedNavSection = navItem.label; // Update selected nav section
+            currentSubSection = null; // Reset sub-section
+    
+            // If sub-nav items exist
+            if (subNavItems.length > 0) {
+                if (isXL) {
+                    // On XL screens, navigate to the first sub-nav item
+                    currentSection = selectedNavSection;
+                    currentSubSection = subNavItems[0];
+                    navigateToPage(currentSection, currentSubSection);
+                    subNav.style.display = 'block'; // Ensure sub-nav is displayed on XL
+                    populateSubNav(subNavItems);
+                } else {
+                    // On M and L screens, show sub-nav without navigating
+                    subNav.style.display = 'block';
+                    populateSubNav(subNavItems);
+                }
+            } else {
+                // If no sub-nav, navigate directly and hide sub-nav
+                currentSection = selectedNavSection;
+                navigateToPage(currentSection);
+                subNav.style.display = 'none';
+            }
+        }
+    
+        // Function to populate the sub-nav
+        function populateSubNav(items) {
+            subNavList.innerHTML = ''; // Clear existing sub-nav content
+    
+            items.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item;
+    
+                // Add click event to navigate to the sub-page
+                listItem.addEventListener('click', () => {
+                    currentSection = selectedNavSection; // Now the user navigates
+                    currentSubSection = item;
+                    navigateToPage(currentSection, currentSubSection);
+                    hideSubNavOnML(); // Hide sub-nav after selecting an item on M and L
+                });
+    
+                subNavList.appendChild(listItem);
+            });
+        }
+    
+        // Function to simulate navigation
+        function navigateToPage(section, subSection = null) {
+            const path = subSection ? `${section} > ${subSection}` : section;
+            mainLabel.textContent = `Viewing: ${path}`;
+            console.log(`Navigated to: ${path}`);
+        }
+    
+        // Function to hide sub-nav on M and L screens
+        function hideSubNavOnML() {
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+            if (!isXL) {
+                subNav.style.display = 'none';
+            }
+        }
+    
+        // Initial build of the navigation
+        buildNavRail();
+    
+        // Simulate initial navigation to 'Racing' for demo purposes
+        navigateToPage(currentSection);
+    
+        // On initial load, display sub-nav if current section has one and screen is XL
+        const isXL = window.matchMedia('(min-width: 1440px)').matches;
+        if (isXL) {
+            const subNavItems = navConfig.find(item => item.label === currentSection)?.subNav || [];
+            if (subNavItems.length > 0) {
+                subNav.style.display = 'block';
+                populateSubNav(subNavItems);
+            }
+        }
+    
+        // Ensure sub-nav behaves correctly on window resize
+        window.addEventListener('resize', () => {
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+    
+            if (isXL) {
+                // On XL screens, display sub-nav based on currentSection
+                const subNavItems = navConfig.find(item => item.label === currentSection)?.subNav || [];
+                if (currentSection && subNavItems.length > 0) {
+                    subNav.style.display = 'block';
+                    populateSubNav(subNavItems);
+                } else {
+                    subNav.style.display = 'none';
+                }
+            } else {
+                // On M and L screens, hide the sub-nav unless it was explicitly shown by user interaction
+                subNav.style.display = 'none';
+            }
+        });
+    </script>
+        
+</body>
+</html>
