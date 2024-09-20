@@ -1,9 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nav Layout Test with Dynamic Sub Nav and Content</title>
+    <title>Nav Layout Test</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
     <style>
         /* Basic Reset */
         * {
@@ -16,6 +20,13 @@
             height: 100%;
             font-family: Arial, Helvetica, sans-serif;
         }
+
+        * {
+  font-family: "Indie Flower", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
 
         /* Header styles */
         header {
@@ -33,8 +44,9 @@
 
         .logo {
             background-color: rgba(150, 255, 3, 1);
-            min-width: 100px;
+            min-width: 72px;
             height: 72px;
+            border-bottom: 1px solid rgba(0, 64, 69, 1);
         }
 
         /* Main container */
@@ -47,7 +59,7 @@
 
         /* Nav rail */
         .nav-rail {
-            width: 100px;
+            width: 72px;
             background-color: rgba(0, 64, 69, 1);
             padding: 16px 8px;
             display: flex;
@@ -80,7 +92,7 @@
 
         /* Sub Nav styles */
         .sub-nav {
-            width: 200px;
+            width: 215px;
             height: 100%; /* Full height */
             background-color: rgba(242, 242, 242, 1);
             margin-right: 8px;
@@ -109,7 +121,7 @@
         /* Content container inside main section */
         .content-container {
             width: 100%;
-            max-width: 1100px; /* Max width on XL screens */
+            max-width: 1600px; /* Max width on XL screens */
             display: flex;
             flex-direction: row;
             gap: 16px; /* Space between columns */
@@ -118,15 +130,33 @@
         /* Left column - stretches */
         .left-column {
             flex-grow: 1;
-            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+    flex-grow: 1; /* This makes the page content expand to fill available space */
+    padding: 16px; /* Optional: Padding for the content */
+    background-color: #ffffff; /* Optional: Background colour for the content */
+    background-color: #fff;
             border: 1px solid #ccc;
             padding: 8px;
             border-radius: 6px;
-        }
+}
+
+.footer {
+    height: 60px; /* Fixed height for the footer */
+    background-color: #333; /* Optional: Background colour for the footer */
+    color: #ffffff; /* Optional: Text colour */
+    display: flex;
+    align-items: center; /* Vertically centre the text within the footer */
+    justify-content: center; /* Horizontally centre the text within the footer */
+    margin-top: 16px;
+}
 
         /* Right column - betslip */
         .betslip {
-            width: 350px;
+            width: 352px;
             background-color: #f5f5f5;
             padding: 8px;
             display: flex;
@@ -204,7 +234,12 @@
             <div class="content-container">
                 <!-- Left Column -->
                 <div class="left-column" id="mainContent">
-                    <div class="label" id="mainLabel">Left Column</div>
+                    <div class="page-content">
+                        <div class="label" id="mainLabel">Left Column</div>
+                    </div>
+                    <div class="footer">
+                        <div class="label">Footer</div>
+                    </div>
                 </div>
 
                 <!-- Right Column (Betslip) -->
@@ -344,7 +379,7 @@
         // Function to simulate navigation
         function navigateToPage(section, subSection = null) {
             const path = subSection ? `${section} > ${subSection}` : section;
-            mainLabel.textContent = `Viewing: ${path}`;
+            mainLabel.textContent = `Current page: ${path}`;
             console.log(`Navigated to: ${path}`);
         }
     
