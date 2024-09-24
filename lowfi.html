@@ -189,7 +189,7 @@
         @media (max-width: 1439px) {
             .sub-nav {
                 position: absolute;
-                left: 100px; /* Next to nav rail */
+                left: 72px; /* Next to nav rail */
                 z-index: 1;
                 width: 200px;
                 height: 100%; /* Full height */
@@ -290,11 +290,33 @@
         const subNav = document.getElementById('subNav');
         const subNavList = document.getElementById('subNavList');
         const mainLabel = document.getElementById('mainLabel');
+        const contentContainer = document.querySelector('.content-container');
     
         // Track current section and sub-section
-        let currentSection = 'Home'; // Assume initial section is 'Racing' for demo
+        let currentSection = 'Home'; // Assume initial section is 'Home' for demo
         let currentSubSection = null;
-        let selectedNavSection = null; // New variable to track selected nav item
+        let selectedNavSection = null; // Variable to track selected nav item
+    
+        // Track whether the mouse is over the sub-nav
+        let isMouseOverSubNav = false;
+    
+        // Function to adjust the content container's max-width based on sub-nav visibility
+        function adjustContentWidth() {
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+            if (isXL) {
+                // Check if subNav is displayed
+                if (subNav.style.display === 'block') {
+                    // Sub-nav is displayed, set max-width to 1600px
+                    contentContainer.style.maxWidth = '1600px';
+                } else {
+                    // Sub-nav is not displayed, set max-width to 1823px
+                    contentContainer.style.maxWidth = '1823px';
+                }
+            } else {
+                // For other screen sizes, reset to default
+                contentContainer.style.maxWidth = '';
+            }
+        }
     
         // Function to build the Nav Rail
         function buildNavRail() {
@@ -319,6 +341,15 @@
                 // Add event listener for click to show sub-nav or navigate
                 navItem.addEventListener('click', () => {
                     handleNavClick(index);
+                });
+    
+                // Add hover event listeners for nav items
+                navItem.addEventListener('mouseenter', () => {
+                    handleNavMouseEnter(index);
+                });
+    
+                navItem.addEventListener('mouseleave', () => {
+                    handleNavMouseLeave();
                 });
     
                 navRail.appendChild(navItem);
@@ -354,6 +385,7 @@
                 navigateToPage(currentSection);
                 subNav.style.display = 'none';
             }
+            adjustContentWidth(); // Adjust content width based on sub-nav visibility
         }
     
         // Function to populate the sub-nav
@@ -381,6 +413,19 @@
             const path = subSection ? `${section} > ${subSection}` : section;
             mainLabel.textContent = `Current page: ${path}`;
             console.log(`Navigated to: ${path}`);
+    
+            // After navigation, adjust sub-nav and content width
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+            const subNavItems = navConfig.find(item => item.label === section)?.subNav || [];
+            if (isXL) {
+                if (subNavItems.length > 0) {
+                    subNav.style.display = 'block';
+                    populateSubNav(subNavItems);
+                } else {
+                    subNav.style.display = 'none';
+                }
+            }
+            adjustContentWidth(); // Adjust content width based on sub-nav visibility
         }
     
         // Function to hide sub-nav on M and L screens
@@ -389,12 +434,64 @@
             if (!isXL) {
                 subNav.style.display = 'none';
             }
+            adjustContentWidth(); // Adjust content width based on sub-nav visibility
         }
+    
+        // Function to handle mouse enter on nav items
+        function handleNavMouseEnter(index) {
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+    
+            if (!isXL) {
+                const navItem = navConfig[index];
+                const subNavItems = navItem.subNav;
+    
+                if (subNavItems.length > 0) {
+                    selectedNavSection = navItem.label; // Update selected nav section
+                    currentSubSection = null; // Reset sub-section
+    
+                    subNav.style.display = 'block';
+                    populateSubNav(subNavItems);
+    
+                    // Optional: Adjust sub-nav position based on nav item
+                }
+            }
+        }
+    
+        // Function to handle mouse leave from nav items
+        function handleNavMouseLeave() {
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+    
+            if (!isXL) {
+                // Delay hiding to allow mouse to enter sub-nav
+                setTimeout(() => {
+                    if (!isMouseOverSubNav) {
+                        subNav.style.display = 'none';
+                        adjustContentWidth(); // Adjust content width based on sub-nav visibility
+                    }
+                }, 100); // Adjust timeout as needed
+            }
+        }
+    
+        // Event listeners for sub-nav to track mouse over state
+        subNav.addEventListener('mouseenter', () => {
+            isMouseOverSubNav = true;
+        });
+    
+        subNav.addEventListener('mouseleave', () => {
+            isMouseOverSubNav = false;
+    
+            const isXL = window.matchMedia('(min-width: 1440px)').matches;
+    
+            if (!isXL) {
+                subNav.style.display = 'none';
+                adjustContentWidth(); // Adjust content width based on sub-nav visibility
+            }
+        });
     
         // Initial build of the navigation
         buildNavRail();
     
-        // Simulate initial navigation to 'Racing' for demo purposes
+        // Simulate initial navigation to 'Home' for demo purposes
         navigateToPage(currentSection);
     
         // On initial load, display sub-nav if current section has one and screen is XL
@@ -404,7 +501,10 @@
             if (subNavItems.length > 0) {
                 subNav.style.display = 'block';
                 populateSubNav(subNavItems);
+            } else {
+                subNav.style.display = 'none';
             }
+            adjustContentWidth(); // Adjust content width based on sub-nav visibility
         }
     
         // Ensure sub-nav behaves correctly on window resize
@@ -424,8 +524,10 @@
                 // On M and L screens, hide the sub-nav unless it was explicitly shown by user interaction
                 subNav.style.display = 'none';
             }
+            adjustContentWidth(); // Adjust content width based on sub-nav visibility
         });
     </script>
+            
         
 </body>
 </html>
