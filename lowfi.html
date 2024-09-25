@@ -201,6 +201,10 @@
             }
         }
 
+        body[data-page='play-central'] .betslip {
+    display: none;
+}
+
     </style>
 </head>
 <body>
@@ -411,8 +415,11 @@
         // Function to simulate navigation
         function navigateToPage(section, subSection = null) {
             const path = subSection ? `${section} > ${subSection}` : section;
+            const pageClass = path.replace(/\s+/g, '-').replace('>', '-').toLowerCase();
+            document.body.setAttribute('data-page', pageClass);
+
             mainLabel.textContent = `Current page: ${path}`;
-            console.log(`Navigated to: ${path}`);
+            console.log(`Navigated to: ${path} (${pageClass})`);
     
             // After navigation, adjust sub-nav and content width
             const isXL = window.matchMedia('(min-width: 1440px)').matches;
